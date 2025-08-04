@@ -12,7 +12,7 @@ jobs:
     steps:
       - users: action/checkout@v3
           with:
-            node-version: 20
+            node-version:20
       - run: npm ci
       - run: npm test
       - run: npm run built
