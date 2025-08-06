@@ -1,47 +1,22 @@
-# Base image
-FROM node:16
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files and install dependencies
-COPY package.json ./
-RUN npm install
-
-# Copy application code
-COPY . .
-
-# Expose the application port
-EXPOSE 3000
-
-# Start the application
-CMD ["node", "src/app.js"]
-name: CI/CD Pipeline
+name: Test Project
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
+    container:
+      image: node:20
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build Docker image
-      run: docker build -t my-node-app:latest .
-
-    - name: Push Docker image to Docker Hub
-      run: docker push my-node-app:latest
+      - uses: actions/checkout@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
       
     
       
